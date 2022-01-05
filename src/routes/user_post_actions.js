@@ -1,11 +1,28 @@
 const express = require('express');
 const route = express.Router();
 const middleware = require('./middleware');
-const Question = require('../models/Question');
 const Quiz = require('../models/Quiz');
+const multer = require('multer');
+// const upload = multer({ dest: "uploads" });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null,uniqueSuffix + file.originalname);
+  }
+});
 
-route.post('/save/qq',middleware, async (req,res)=>{
+const upload = multer({ storage: storage });
 
+route.post('/upload',upload.single('image'),(req,res)=>{
+  
+  res.send(process.env.BASE_URL+req.file.path);
+
+})
+
+route.post('/save/qq',middleware,async (req,res)=>{
    const quiz = new Quiz({
      title: req.body.title,
      userId: req.user._id,
@@ -19,7 +36,6 @@ route.post('/save/qq',middleware, async (req,res)=>{
   }).catch(err=>{
     res.status(400).send(err);
   })
-
 });
 
 module.exports = route;

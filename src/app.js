@@ -9,8 +9,9 @@ const authRoute = require('./routes/auth');
 const usergetRoute = require('./routes/user_get_actions');
 const userpostRoute = require('./routes/user_post_actions');
 //bodyparser
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use('/uploads',express.static('uploads'));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({extended: false,limit: '50mb'}));
 app.use(authRoute);
 app.use(usergetRoute);
 app.use('/api/actions',userpostRoute);
