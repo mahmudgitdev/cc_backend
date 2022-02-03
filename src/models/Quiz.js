@@ -12,6 +12,9 @@ const quizSchema = new mongoose.Schema({
     },
     questions:{
         type:Array
+    },
+    isAssign:{
+        type:Boolean
     }
     // questions:[
     //     {

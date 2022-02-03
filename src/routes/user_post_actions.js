@@ -3,6 +3,7 @@ const route = express.Router();
 const middleware = require('./middleware');
 const Quiz = require('../models/Quiz');
 const multer = require('multer');
+const Assignment = require('../models/Assignment');
 // const upload = multer({ dest: "uploads" });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -37,5 +38,24 @@ route.post('/save/qq',middleware,async (req,res)=>{
     res.status(400).send(err);
   })
 });
+
+route.post('/save/assignment',middleware, async (req,res)=>{
+   const assignment = new Assignment({
+     title: req.body.title,
+     userId: req.user._id,
+     quizId: req.body.quizId,
+     gamepin: req.body.gamepin,
+     endDate: req.body.endDate
+   });
+
+   await assignment.save().then((result)=>{
+     res.status(200).json({
+       success: "success",
+       data: result
+     })
+   }).catch(err=>{
+     res.status(400).send(err);
+   })
+})
 
 module.exports = route;
