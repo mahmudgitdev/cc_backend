@@ -4,7 +4,10 @@ const middleware = require('./middleware');
 const Quiz = require('../models/Quiz');
 const multer = require('multer');
 const Assignment = require('../models/Assignment');
-// const upload = multer({ dest: "uploads" });
+const fse = require('fs-extra');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fse.unlink);
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './uploads/');
@@ -17,10 +20,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-route.post('/upload',upload.single('image'),(req,res)=>{
+route.post('/upload/image',upload.single('image'),(req,res)=>{
   
-  res.send(process.env.BASE_URL+req.file.path);
+  res.json({
+    fullpath: process.env.BASE_URL+req.file.path,
+    path: req.file.path
+  });
 
+});
+
+route.post('/upload/audio',upload.single('audio'),(req,res)=>{
+  res.json({
+    fullpath: process.env.BASE_URL+req.file.path,
+    path: req.file.path
+  });
+
+});
+
+route.post('/remove/file',async (req,res)=>{
+  await unlinkAsync(req.body.path_file);
+    res.json({
+      success: "removed"
+    });
 })
 
 route.post('/save/qq',middleware,async (req,res)=>{
@@ -56,6 +77,23 @@ route.post('/save/assignment',middleware, async (req,res)=>{
    }).catch(err=>{
      res.status(400).send(err);
    })
+});
+
+route.post('/save/reports',middleware, async (req,res)=>{
+
+  const new_reports = {
+    nickname: req.body.nickname,
+    points: req.body.points
+  }
+  await Assignment.findOneAndUpdate(
+    { _id: req.body.assignmentId },
+    { $push: { participant: new_reports  } }
+  ).then((response)=>{
+    res.status(200).send("success");
+  }).catch(err=>{
+    console.log(err)
+  })
+
 })
 
 module.exports = route;

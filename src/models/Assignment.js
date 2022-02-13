@@ -18,6 +18,9 @@ const assignmentSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    participant:{
+        type:Array
+    },
     endDate:{
         type:Date
     }

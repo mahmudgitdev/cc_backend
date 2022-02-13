@@ -23,6 +23,16 @@ route.post('/get/quiz',middleware, async(req,res)=>{
     res.send(quiz);
 });
 
+route.post('/get/assignment/report',middleware, async(req,res)=>{
+    const assignment = await Assignment.findById(req.body.id);
+    res.send(assignment);
+});
+route.post('/get/assignment/by_quizid',middleware, async(req,res)=>{
+    const assignment = await Assignment.find({quizId: req.body.id}).sort({createdAt: -1}).exec();
+    res.send(assignment);
+});
+
+
 route.post('/get/challenge', async(req,res)=>{
     const assignment = await Assignment.findById(req.body.id);
     const quiz = await Quiz.findById(assignment.quizId);
