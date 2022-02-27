@@ -4,9 +4,10 @@ const middleware = require('./middleware');
 const User = require('../models/User');
 const Quiz = require('../models/Quiz');
 const Assignment = require('../models/Assignment');
+const GameRoomResource = require('../models/GameRoomResource');
 route.get('/auth/user',middleware, async (req,res)=>{
     const user = await User.findById(req.user._id);
-    res.send(user)
+    res.send(user);
 });
 
 route.get('/my-library',middleware, async(req,res)=>{
@@ -32,6 +33,23 @@ route.post('/get/assignment/by_quizid',middleware, async(req,res)=>{
     res.send(assignment);
 });
 
+route.post('/get/game_room/resources',middleware, async(req,res)=>{
+
+    const game_room = new GameRoomResource({
+        authorId: req.user._id,
+        quizId: req.body.quiz_id,
+        gamepin: req.body.gamepin
+      });
+
+      await game_room.save().then((result)=>{
+        res.status(200).json({
+          resources:result
+        })
+      }).catch(err=>{
+        res.status(400).send(err);
+      })
+
+})
 
 route.post('/get/challenge', async(req,res)=>{
     const assignment = await Assignment.findById(req.body.id);

@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
-const assignmentSchema = new mongoose.Schema({
+const GameRoomResourceSchema = new mongoose.Schema({
 
-    title:{
-        type:String,
-        required:true
-    },
-    userId:{
+    authorId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true
     },
@@ -19,14 +15,9 @@ const assignmentSchema = new mongoose.Schema({
     },
     participant:{
         type:Array
-    },
-    endDate:{
-        type:Date
     }
-
-
 },{timestamps:true});
 
-const Assignment = mongoose.model('Assignment',assignmentSchema);
+const GameRoomResource = mongoose.model('GameRoomResource',GameRoomResourceSchema);
 
-module.exports = Assignment;
+module.exports = GameRoomResource;
