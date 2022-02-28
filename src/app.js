@@ -31,7 +31,7 @@ app.use('/api/actions',userpostRoute);
 // });
 const io = require("socket.io")(server,{
   cors: {
-    origin: process.env.CLIENT_BASE_URL,
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true
