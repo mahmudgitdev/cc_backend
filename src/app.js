@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
 const cors = require('cors');
@@ -20,15 +20,6 @@ app.use(authRoute);
 app.use(usergetRoute);
 app.use('/api/actions',userpostRoute);
 
-
-// const io = require("socket.io")(server,{
-//   cors: {
-//     origin: process.env.CLIENT_BASE_URL,
-//     methods: ["GET", "POST"],
-//     allowedHeaders: ["my-custom-header"],
-//     credentials: true
-//   }
-// });
 const io = require("socket.io")(server,{
   cors: {
     origin: "*",
@@ -43,17 +34,29 @@ const {
   startGame,
   submitAnswer,
   finalResult,
-  disconnectPlayer
+  disconnectPlayer,
+  checkGameRoom
 } = require('./utils/socket/onRequest')(io);
 
+const {
+  createGameRoom,
+  disconnectAdmin
+} = require('./utils/socket/onAdminRequest')(io);
+
 const onConnection = (socket)=>{
+
+  socket.on('createRoom',createGameRoom);
+
   socket.on('join',joinGameRoom);
+
   socket.on('getting_ready',gettingReady);
   socket.on('start_game',startGame);
   socket.on('new_question',newQuestion);
   socket.on('submit_answer',submitAnswer);
   socket.on('final_result',finalResult);
+  socket.on('checkJoin',checkGameRoom);
   socket.on('disconnect',disconnectPlayer);
+  socket.on('disconnect',disconnectAdmin);
 }
 
 io.on('connection',onConnection);

@@ -1,13 +1,11 @@
 const players = [];
-
-const addPlayer = ({author ,id, name, room }) => {
+const addPlayer = ({id, name, room }) => {
   name = name.trim().toLowerCase();
   room = room.toString();
-  const existingUser = players.find((player) => player.room === room && player.name === name);
+  const existingPlayer = players.find((player) => player.room === room && player.name === name);
 
-  if(!name || !room) return { error: 'Username and room are required.' };
-  if(existingUser) return { error: 'Username already exits in this room.' };
-  const player = { author, id, name, room };
+  if(existingPlayer) return { error: 'Username already exits in this room.' };
+  const player = { id, name, room };
   players.push(player);
   return { player };
 }
