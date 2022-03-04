@@ -1,53 +1,57 @@
 const { addPlayer, getPlayer, getPlayerInRoom, removePlayer, getRoomAdmin } = require('../services/players');
-
+const { findAdmin, getAdmin, getAdminByRoom } = require('../services/rooms');
 module.exports = (io) => {
-    const joinGameRoom = function (payload) {
+
+
+    const joinGameRoom = function (payload,callback) {
         const socket = this;
-        const {error,player} = addPlayer({author: payload.author, id:socket.id, name:payload.name, room:payload.room});
+        const {error,player} = addPlayer({id:socket.id, name:payload.name, room:payload.gamepin});
         if(error){
-        // socket.emit('error_join',(error));
-        console.log(error);
+            callback({error});
         }else{
         socket.join(player.room);
         socket.broadcast.to(player.room).emit('new_player',player);
+        callback({player})
         }
     };
 
+
+
     const gettingReady = function(){
         const socket = this;
-        const player = getPlayer(socket.id);
-        io.to(player.room).emit('getting_ready');
+        const admin = getAdmin(socket.id);
+        io.to(admin.room).emit('getting_ready');
     }
 
     const startGame = function(payload){
         const socket = this;
-        const player = getPlayer(socket.id);
-        io.to(player.room).emit('game_is_running',(payload));
+        const admin = getAdmin(socket.id);
+        io.to(admin.room).emit('game_is_running',(payload));
     }
 
     const newQuestion = function(payload){
         const socket = this;
-        const player = getPlayer(socket.id);
-        io.to(player.room).emit('new_question_accept',(payload));
+        const admin = getAdmin(socket.id);
+        io.to(admin.room).emit('new_question_accept',(payload));
     }
 
     const submitAnswer = function(payload){
         const socket = this;
         const player = getPlayer(socket.id);
-        const roomAdmin = getRoomAdmin(player.room);
+        const admin = getAdminByRoom(player.room);
         const data = {
             id: player.id,
             name: player.name,
             points: payload.points,
             answer: payload.answer
         }
-        io.to(roomAdmin.id).emit('accept_answer',({data}));
+        io.to(admin.id).emit('accept_answer',({data}));
     }
 
     const finalResult = function(result){
         const socket = this;
-        const player = getPlayer(socket.id);
-        io.to(player.room).emit('accept_result',(result));
+        const admin = getAdmin(socket.id);
+        io.to(admin.room).emit('accept_result',(result));
     }
 
     const disconnectPlayer = function(){
@@ -60,6 +64,15 @@ module.exports = (io) => {
         }
     }
 
+    const checkGameRoom = function(payload,callback){
+        const {error} = findAdmin(payload);
+        if(error){
+            callback(error);
+        }else{
+            callback("success");
+        }
+    }
+
   
     return {
         joinGameRoom,
@@ -68,6 +81,7 @@ module.exports = (io) => {
         startGame,
         submitAnswer,
         finalResult,
-        disconnectPlayer
+        disconnectPlayer,
+        checkGameRoom
     }
   }

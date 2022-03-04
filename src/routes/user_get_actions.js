@@ -54,7 +54,10 @@ route.post('/get/game_room/resources',middleware, async(req,res)=>{
 route.post('/get/challenge', async(req,res)=>{
     const assignment = await Assignment.findById(req.body.id);
     const quiz = await Quiz.findById(assignment.quizId);
-    res.send(quiz);
+    res.send({
+        quiz,
+        randomOrder: assignment.randomOrder
+    });
     
 })
 

@@ -5,16 +5,15 @@ const assignmentSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    randomOrder:{
+        type:Boolean
+    },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true
     },
     quizId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true
-    },
-    gamepin:{
-        type:String,
         required:true
     },
     participant:{

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-// const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/champion';
-const DB_URL = process.env.DB_URL || 'mongodb://championdb:500bfa36915901013b6f4a6bbc67c64b@dokku-mongo-championdb:27017/championdb';
+const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/champion';
+// const DB_URL = process.env.DB_URL || 'mongodb://championdb:500bfa36915901013b6f4a6bbc67c64b@dokku-mongo-championdb:27017/championdb';
 
 // mongoose.connect('mongodb://127.0.0.1:27017/champion',{
 // useNewUrlParser:true,

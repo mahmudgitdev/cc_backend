@@ -63,6 +63,7 @@ route.post('/save/qq',middleware,async (req,res)=>{
 route.post('/save/assignment',middleware, async (req,res)=>{
    const assignment = new Assignment({
      title: req.body.title,
+     randomOrder: req.body.randomOrder,
      userId: req.user._id,
      quizId: req.body.quizId,
      gamepin: req.body.gamepin,
